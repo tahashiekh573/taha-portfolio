@@ -11,7 +11,7 @@ export const GET = adminRoute(async () => {
     projects,
     status: {
       store: storeKind(),
-      email: Boolean(env.resendKey),
+      email: Boolean(env.resendKey || (env.gmailUser && env.gmailAppPassword)),
       contactFrom: env.contactFrom,
       contactTo: env.contactEmail,
       githubToken: Boolean(env.githubToken),

@@ -221,3 +221,45 @@ body {
 .prose-body p + p {
   margin-top: 1rem;
 }
+
+/* Portfolio assistant robot */
+@keyframes robot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes robot-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+@keyframes robot-antenna {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes robot-talk {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.45); }
+}
+.robot-float {
+  animation: robot-float 3.2s ease-in-out infinite;
+}
+.robot .robot-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-blink 4.5s infinite;
+}
+.robot .robot-antenna {
+  animation: robot-antenna 1.6s ease-in-out infinite;
+}
+.robot-talking .robot-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-talk 0.35s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .robot-float,
+  .robot .robot-eyes,
+  .robot .robot-antenna,
+  .robot-talking .robot-mouth {
+    animation: none;
+  }
+}

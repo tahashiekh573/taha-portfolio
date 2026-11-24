@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { env } from "@/lib/env";
+import { mailConfigured, sendMail } from "@/lib/mailer";
 import { contactSchema } from "@/lib/schemas";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { sameOrigin } from "@/lib/api";
@@ -48,15 +48,14 @@ export async function POST(req: Request) {
   if (!settings.contactFormEnabled) {
     return NextResponse.json({ ok: false, error: "The contact form is currently disabled." }, { status: 503 });
   }
-  if (!env.resendKey) {
-    console.error("[contact] RESEND_API_KEY is not set");
+  if (!mailConfigured()) {
+    console.error("[contact] No email provider: set GMAIL_USER + GMAIL_APP_PASSWORD (or RESEND_API_KEY)");
     return NextResponse.json(
       { ok: false, error: "The contact form is not configured yet. Please email me directly." },
       { status: 503 },
     );
   }
 
-  const resend = new Resend(env.resendKey);
   const name = oneLine(data.name);
   const subject = oneLine(data.subject);
   const html = `
@@ -70,17 +69,16 @@ export async function POST(req: Request) {
     </div>`;
   const text = `New portfolio message\n\nName: ${name}\nEmail: ${data.email}\nSubject: ${subject}\n\n${data.message}`;
 
-  const { data: sent, error } = await resend.emails.send({
-    from: env.contactFrom,
-    to: [env.contactEmail],
+  const sent = await sendMail({
+    to: env.contactEmail,
     replyTo: data.email,
     subject: `[Portfolio] ${subject}`.slice(0, 200),
     html,
     text,
   });
 
-  if (error || !sent?.id) {
-    console.error("[contact] Resend error:", error);
+  if (!sent.ok) {
+    console.error("[contact] send failed:", sent.error);
     return NextResponse.json(
       { ok: false, error: "Your message could not be sent right now. Please try again or email me directly." },
       { status: 502 },
@@ -89,13 +87,12 @@ export async function POST(req: Request) {
 
   if (settings.sendConfirmationEmail) {
     // Requires a verified sending domain; failures here do not affect the main result.
-    const confirm = await resend.emails.send({
-      from: env.contactFrom,
-      to: [data.email],
+    const confirm = await sendMail({
+      to: data.email,
       subject: "Thanks for reaching out — Muhammad Taha",
       text: `Hi ${name},\n\nThanks for your message about "${subject}". I've received it and will get back to you soon.\n\nBest regards,\nMuhammad Taha`,
     });
-    if (confirm.error) console.warn("[contact] confirmation email failed:", confirm.error.message);
+    if (!confirm.ok) console.warn("[contact] confirmation email failed:", confirm.error);
   }
 
   return NextResponse.json({ ok: true, id: sent.id });

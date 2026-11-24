@@ -64,7 +64,11 @@ export const experienceSchema = z
       type: text(60).optional(),
       summary: longText(1000).optional(),
       points: list(300, 20),
-      tech: list(60, 30),
+      groups: z.array(z.object({ title: text(150), points: list(300, 30) })).max(8).optional(),
+      metrics: z.array(z.object({ label: text(60), value: text(60) })).max(12).optional(),
+      metricsTitle: text(150).optional(),
+      metricsNote: text(150).optional(),
+      tech: list(60, 40),
       published: z.boolean(),
     }),
   )

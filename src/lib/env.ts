@@ -7,6 +7,9 @@ export const env = {
   supabaseBucket: process.env.SUPABASE_STORAGE_BUCKET || "portfolio",
   dataStore: process.env.DATA_STORE ?? "",
   resendKey: process.env.RESEND_API_KEY ?? "",
+  gmailUser: (process.env.GMAIL_USER ?? "").trim(),
+  // Google shows App Passwords in groups of four ("abcd efgh ..."); spaces are not part of it.
+  gmailAppPassword: (process.env.GMAIL_APP_PASSWORD ?? "").replace(/\s+/g, ""),
   contactEmail: process.env.CONTACT_EMAIL || "tahasajjad678@gmail.com",
   contactFrom: process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <onboarding@resend.dev>",
   githubToken: process.env.GITHUB_TOKEN ?? "",

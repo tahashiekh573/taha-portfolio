@@ -16,16 +16,21 @@ export function ProjectCover({
   priority?: boolean;
 }) {
   if (project.thumbnail) {
+    // SVG covers are designed illustrations (not screenshots) and are served as-is.
+    const isSvg = /\.svg(\?|$)/i.test(project.thumbnail);
     return (
       <div className={cn("relative overflow-hidden bg-bg-elevated", className)}>
         <Image
           src={project.thumbnail}
-          alt={`${project.title} screenshot`}
+          alt={`${project.title} ${isSvg ? "illustration" : "screenshot"}`}
           fill
           sizes={sizes}
           priority={priority}
-          className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
-          unoptimized={!isOptimizable(project.thumbnail)}
+          className={cn(
+            "object-cover transition duration-500 group-hover:scale-[1.03]",
+            isSvg ? "object-center" : "object-top",
+          )}
+          unoptimized={isSvg || !isOptimizable(project.thumbnail)}
         />
       </div>
     );

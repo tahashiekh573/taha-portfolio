@@ -1,6 +1,8 @@
 import { Header, type NavItem } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { BackToTop } from "@/components/site/back-to-top";
+import { Assistant } from "@/components/site/assistant";
+import { SwarmBackground } from "@/components/site/swarm-background";
 import { getSiteContent } from "@/lib/content";
 
 export default async function SiteLayout({ children }: LayoutProps<"/">) {
@@ -17,10 +19,12 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
   ];
   return (
     <>
+      <SwarmBackground />
       <Header items={items} hasResume={Boolean(content.resume.url)} />
       <main id="main">{children}</main>
       <Footer profile={content.profile} />
       <BackToTop />
+      <Assistant />
     </>
   );
 }

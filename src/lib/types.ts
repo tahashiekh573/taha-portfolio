@@ -46,6 +46,12 @@ export interface Experience {
   type?: string;
   summary?: string;
   points: string[];
+  /** Optional grouped responsibilities, e.g. one group per domain. */
+  groups?: { title: string; points: string[] }[];
+  /** Optional scores or numbers, e.g. monthly performance evaluations. */
+  metrics?: { label: string; value: string }[];
+  metricsTitle?: string;
+  metricsNote?: string;
   tech: string[];
   published: boolean;
 }
